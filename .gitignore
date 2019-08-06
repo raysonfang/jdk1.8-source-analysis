@@ -1,3 +1,8 @@
+# directory
+/out/
+/.idea/
+*.iml
+
 # Compiled class file
 *.class
 
