@@ -1,12 +1,14 @@
 # jdk1.8-source-analysis
 JDK1.8源码分析
 
-#导入源码过程中的注意事项
+# 导入源码过程中的注意事项
 
 源码在src目录下
 
 以下两个类手动添加的，解决编译过程中该包的丢失
+
 sun.font.FontConfigManager 
+
 sun.awt.UNIXToolkit 
 
 其中：请手动添加jdk下面的lib到path中
