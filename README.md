@@ -1,10 +1,22 @@
 # jdk1.8-source-analysis
 JDK1.8源码分析
 
+#导入源码过程中的注意事项
+
+源码在src目录下
+
+以下两个类手动添加的，解决编译过程中该包的丢失
+sun.font.FontConfigManager 
+sun.awt.UNIXToolkit 
+
+其中：请手动添加jdk下面的lib到path中
+
+
 # 学习计划
 
 很多java开发的小伙伴都会阅读jdk源码，然而确不知道应该从哪读起。以下为小编整理的通常所需阅读的源码范围。
 标题为包名，后面序号为优先级1-4，优先级递减
+
 1、java.lang
 ```
 1) Object 1

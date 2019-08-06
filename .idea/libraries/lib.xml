@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="file://D:/tools/Java/jdk1.8.0_151/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://D:/tools/Java/jdk1.8.0_151/lib" />
+    </SOURCES>
+    <jarDirectory url="file://D:/tools/Java/jdk1.8.0_151/lib" recursive="false" />
+    <jarDirectory url="file://D:/tools/Java/jdk1.8.0_151/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>
