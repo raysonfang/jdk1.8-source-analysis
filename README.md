@@ -12,8 +12,9 @@ sun.font.FontConfigManager
 
 sun.awt.UNIXToolkit 
 
-其中：请手动添加jdk下面的lib到path中
-
+其中：
+   1.请手动添加jdk下面的lib到path中
+   2.lib文件夹下面的junit测试jar包添加到path中，以便编写测试用例
 
 # 学习计划
 
@@ -172,3 +173,9 @@ sun.awt.UNIXToolkit
 4) URL 4
 5) URLEncoder 4
 ```
+
+# JDK1.8源码分析系列文章
+01=JDK1.8源码分析01之学习建议（可以延伸其他源码学习）
+02=JDK1.8源码分析02之阅读源码顺序
+03=JDK1.8源码分析03之idea搭建源码阅读环境
+04=JDK1.8源码分析04之java.lang.Object类
