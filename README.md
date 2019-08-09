@@ -14,6 +14,7 @@ sun.awt.UNIXToolkit
 
 其中：
    1.请手动添加jdk下面的lib到path中
+   
    2.lib文件夹下面的junit测试jar包添加到path中，以便编写测试用例
 
 # 学习计划
