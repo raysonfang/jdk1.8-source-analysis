@@ -11,10 +11,6 @@ import org.junit.Test;
  */
 public class ObjectTest {
 
-    public static void main(String[] args) {
-
-    }
-
     /**
      * Object#getClass()
      */
@@ -29,8 +25,17 @@ public class ObjectTest {
          * 当前运行类的继承的父类为：class tests.java.lang.Parent
          */
         Son son = new Son();
-        System.out.println("当前运行类为:" + son.getClass());
+        System.out.println("当前运行类为:" + son.getClass().getCanonicalName());
         System.out.println("通过class属性获取类的类对象：" + Parent.class);
         System.out.println("当前运行类的继承的父类为：" + son.getClass().getSuperclass());
+    }
+
+    /**
+     * 测试日志对象
+     */
+    @Test
+    public void testParentLog(){
+        Son son = new Son();
+        son.println();
     }
 }
