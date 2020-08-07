@@ -495,6 +495,11 @@ public final class System {
                                         int length);
 
     /**
+     * 返回给定对象的identity hash code，它只与当前对象的父类Object#hashCode()的值有关(即使被子类重写了hashCode方法，也会忽略)。
+     * 在Dubbo 和
+     * @see java.util.concurrent.ConcurrentHashMap.TreeBin#tieBreakOrder(java.lang.Object, java.lang.Object)
+     * 都有使用
+     *
      * Returns the same hash code for the given object as
      * would be returned by the default method hashCode(),
      * whether or not the given object's class overrides
