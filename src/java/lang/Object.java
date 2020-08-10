@@ -63,6 +63,29 @@ public class Object {
     public final native Class<?> getClass();
 
     /**
+     * 1. 获取对象的hashCode，如果不重写的情况下，jdk8默认会采用xor-shift方式生成，JDK8以前默认采用随机数方式生成
+     *        openjdk中hashCode 定义 hashCode 的方法在下面两个文件中: src/share/vm/prims/jvm.h 和 src/share/vm/prims/jvm.cpp,
+     *        发现一共存在6中生成方式
+     *            0: A randomly generated number
+     *            1: A function of memory address of the object
+     *            2: A hardcoded 1 (used for sensitivity testing.)
+     *            3: A sequence.
+     *            4: The memory address of the object, cast to int
+     *            5（else）: Thread state combined with xor-shift
+     *
+     *            0 - 使用Park-Miller伪随机数生成器（跟地址无关）
+     *            1 - 使用地址与一个随机数做异或（地址是输入因素的一部分）
+     *            2 - 总是返回常量1作为所有对象的identity hash code（跟地址无关）
+     *            3 - 使用全局的递增数列（跟地址无关）
+     *            4 - 使用对象地址的“当前”地址来作为它的identity hash code（就是当前地址）
+     *            5 - 使用线程局部状态来实现Marsaglia's xor-shift随机数生成（跟地址无关），从注释中可以看到：这可能是最好的hashcode生成实现—在未来的版本中可能会将此设置为默认值
+     *            扩展补充：Xorshift 算法介绍:
+     *                Xorshift 随机数生成器是 George Marsaglia 发明的一类伪随机数生成器。它们通过和自己逻辑移位后的数进行异或操作来生成序列中的下一个数。这在现代计算机体系结构非常快。它们是线性反馈移位寄存器的一个子类，其简单的实现使它们速度更快且使用更少的空间。然而，必须仔细选择合适参数以达到长周期。
+     *                Xorshift生成器是非密码安全的随机数生成器中最快的一种，只需要非常短的代码和状态。虽然它们没有进一步改进以通过统计检验，这个缺点非常著名且容易修改（Marsaglia 在原来的论文中指出），用复合一个非线性函数的方式，可以得到比如像 xorshift+ 或 xorshift* 生成器。一个简单的C语言实现的 xorshift+ 生成器通过了所有的 BigCrush 的测试（比 Mersenne Twister 算法和 WELL 算法的失败次数减少了一个数量级），而且在 x86 上产生一个随机数通常只需要不到十个时钟周期，多亏了指令流水线。
+     *
+     *
+     *           PS: 有人可能会疑惑，使用随机数方式生成hashCode之后，那岂不是每次调用就是未知数了，不能保证幂等性。然而并不是这样的，同一对象的hashCode从初次获取后就已经被缓存到对象头的MarkWord中了,以后获取时如果发现MarkWord中有hashCode,那么就会直接返回。
+     *
      * Returns a hash code value for the object. This method is
      * supported for the benefit of hash tables such as those provided by
      * {@link java.util.HashMap}.
