@@ -1742,6 +1742,7 @@ class Thread implements Runnable {
     public enum State {
         /**
          * Thread state for a thread which has not yet started.
+         * 当线程被创建出来还没有被调用start()时候的状态
          */
         NEW,
 
@@ -1750,6 +1751,9 @@ class Thread implements Runnable {
          * state is executing in the Java virtual machine but it may
          * be waiting for other resources from the operating system
          * such as processor.
+         *
+         * 当线程被调用了start()，且处于等待操作系统分配资源（如CPU）、等待IO连接、正在运行状态，即表示Running状态和Ready状态。
+         * 注：不一定被调用了start()立刻会改变状态，还有一些准备工作，这个时候的状态是不确定的。
          */
         RUNNABLE,
 
@@ -1759,6 +1763,9 @@ class Thread implements Runnable {
          * to enter a synchronized block/method or
          * reenter a synchronized block/method after calling
          * {@link Object#wait() Object.wait}.
+         *
+         * 等待监视锁，这个时候线程被操作系统挂起。当进入synchronized块/方法或者在调用wait()被唤醒/超时之后重新进入synchronized块/方法，锁被其它线程占有，这个时候被操作系统挂起，状态为阻塞状态。
+         * 阻塞状态的线程，即使调用interrupt()方法也不会改变其状态。
          */
         BLOCKED,
 
@@ -1780,6 +1787,8 @@ class Thread implements Runnable {
          * <tt>Object.notify()</tt> or <tt>Object.notifyAll()</tt> on
          * that object. A thread that has called <tt>Thread.join()</tt>
          * is waiting for a specified thread to terminate.
+         *
+         * 无条件等待，当线程调用wait()/join()/LockSupport.park()不加超时时间的方法之后所处的状态，如果没有被唤醒或等待的线程没有结束，那么将一直等待，当前状态的线程不会被分配CPU资源和持有锁。
          */
         WAITING,
 
@@ -1794,12 +1803,16 @@ class Thread implements Runnable {
          *   <li>{@link LockSupport#parkNanos LockSupport.parkNanos}</li>
          *   <li>{@link LockSupport#parkUntil LockSupport.parkUntil}</li>
          * </ul>
+         *
+         * 有条件的等待，当线程调用sleep(睡眠时间)/wait(等待时间)/join(等待时间)/ LockSupport.parkNanos(等待时间)/LockSupport.parkUntil(等待时间)方法之后所处的状态，在指定的时间没有被唤醒或者等待线程没有结束，会被系统自动唤醒，正常退出。
          */
         TIMED_WAITING,
 
         /**
          * Thread state for a terminated thread.
          * The thread has completed execution.
+         *
+         * 执行完了run()方法。其实这只是Java语言级别的一种状态，在操作系统内部可能已经注销了相应的线程，或者将它复用给其他需要使用线程的请求，而在Java语言级别只是通过Java代码看到的线程状态而已。
          */
         TERMINATED;
     }

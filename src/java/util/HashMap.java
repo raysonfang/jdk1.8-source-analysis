@@ -232,6 +232,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * The default initial capacity - MUST be a power of two.
+     *
+     * 容器的容量(默认16)，必须是2的指数幂，因为只有是2的指数幂的情况下，取余与取模才相等
      */
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
@@ -625,12 +627,19 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
+        // 如果容器为空，就去初始化
         if ((tab = table) == null || (n = tab.length) == 0)
+            // 初始化容器
             n = (tab = resize()).length;
+        // 桶位i是null
         if ((p = tab[i = (n - 1) & hash]) == null)
+            // 直接放入新node
             tab[i] = newNode(hash, key, value, null);
+        // 桶位i已经有元素，此时可能是链表或者红黑树
         else {
+            // e: 寻找到插入点的node
             Node<K,V> e; K k;
+            // key与首node相等，直接替换即可
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 e = p;
@@ -638,29 +647,37 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
                 for (int binCount = 0; ; ++binCount) {
+                    // 如果是尾部节点，尾插法插入node
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
+                        // 长度达到9，树化
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
                     }
+                    // 如果node的key相等，跳出遍历，替换当前node的value
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         break;
                     p = e;
                 }
             }
+            // 如果只是替换value，直接替换完返回即可
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
+                // 模板方法设计模式，此处主要是LinkedHashMap使用了，目的是将这个node放到尾部
                 afterNodeAccess(e);
                 return oldValue;
             }
         }
+        // fail-fast机制使用
         ++modCount;
+        // 超过阈值，扩容
         if (++size > threshold)
             resize();
+        // 模板方法设计模式
         afterNodeInsertion(evict);
         return null;
     }
@@ -675,11 +692,15 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return the table
      */
     final Node<K,V>[] resize() {
+        // oldTab数组容器
         Node<K,V>[] oldTab = table;
+        // oldCap：旧数组的长度  oldThr：旧数组的扩容阈值  newCap：新数组长度  newThr：新数组扩容阈值(旧数组扩容阈值的两倍)
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
         int newCap, newThr = 0;
+        // 旧数组不为空
         if (oldCap > 0) {
+            // 数据校验工作，容量最大为 Integer.MAX_VALUE
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
                 return oldTab;
@@ -690,6 +711,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
         else if (oldThr > 0) // initial capacity was placed in threshold
             newCap = oldThr;
+        // 旧数组为null
         else {               // zero initial threshold signifies using defaults
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
@@ -702,19 +724,29 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         threshold = newThr;
         @SuppressWarnings({"rawtypes","unchecked"})
             Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+        // 将新的数组赋值给全局变量，此时意味着在接下来的操作中，都会使用新数组
         table = newTab;
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
+                // e:桶位i的头部Node
                 Node<K,V> e;
                 if ((e = oldTab[j]) != null) {
+                    // 桶位置空
                     oldTab[j] = null;
+                    // 只有一个node
                     if (e.next == null)
+                        // 直接迁移至新数组
                         newTab[e.hash & (newCap - 1)] = e;
+                    // 如果是红黑树
                     else if (e instanceof TreeNode)
+                        // 红黑树的迁移
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
+                    // 长度超过1的链表
                     else { // preserve order
+                        // 高低位链表指针
                         Node<K,V> loHead = null, loTail = null;
                         Node<K,V> hiHead = null, hiTail = null;
+                        // 以下操作主要是把链表拆分为两个链表，放置在新数组[旧下标]桶位的称为低位，放置在新数组[旧下标+旧数组长度]桶位的称为高位
                         Node<K,V> next;
                         do {
                             next = e.next;
