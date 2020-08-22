@@ -192,3 +192,12 @@ sun.awt.UNIXToolkit
 
 持续更新中.......
 
+# 目录结构：
+```metadata json
+├── docs 项目文档
+├── lib
+├── openjdk jdk8的openjdk源码
+├── out
+└── src jdk8源码
+```
+

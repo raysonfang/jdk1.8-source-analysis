@@ -56,8 +56,11 @@ public class AtomicInteger extends Number implements java.io.Serializable {
 
     // setup to use Unsafe.compareAndSwapInt for updates
     private static final Unsafe unsafe = Unsafe.getUnsafe();
+
+    // valueOffset是value在内存中的偏移量
     private static final long valueOffset;
 
+    //通过Unsafe获得valueOffset
     static {
         try {
             valueOffset = unsafe.objectFieldOffset
@@ -65,6 +68,7 @@ public class AtomicInteger extends Number implements java.io.Serializable {
         } catch (Exception ex) { throw new Error(ex); }
     }
 
+    //存储整数值，volatile保证可见性和一定程度的有序性
     private volatile int value;
 
     /**
